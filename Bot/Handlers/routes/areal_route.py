@@ -22,3 +22,97 @@ class ArealRouteStates(StatesGroup):
     IsItPersonalDataCase = State()
     IsItBranchCase = State()
     IsYourDefendentinRF = State()
+
+
+#TODO переход из hierarchy_route
+
+@ArealRouter.message(StateFilter(ArealRouteStates.IsItRealtyCase), Text="Да")
+async def is_it_realty_case_yes(msg: types.Message, state: FSMContext):
+    await msg.answer("Укажите адрес земельного участка")
+    await state.set_state(None)
+
+
+@ArealRouter.message(StateFilter(ArealRouteStates.IsItRealtyCase), Text="Нет")
+async def is_it_realty_case_yes(msg: types.Message, state: FSMContext):
+    await msg.answer("Вы кредитор умершего, а наследники еще не приняли наследство?")
+    await state.set_state(ArealRouteStates.IsItinheritance)
+
+
+@ArealRouter.message(StateFilter(ArealRouteStates.IsItinheritance), Text="Да")
+async def is_it_inheritance_yes (msg: types.Message, state: FSMContext):
+    await msg.answer("Укажите адрес открытия наследства")
+    await state.set_state(None)
+
+
+
+@ArealRouter.message(StateFilter(ArealRouteStates.IsItinheritance), Text="Нет")
+async def is_it_inheritance_no (msg: types.Message, state: FSMContext):
+    await msg.answer("Иск о защите группы лиц?")
+    await state.set_state(ArealRouteStates.IsItGroupCase)
+
+
+@ArealRouter.message(StateFilter(ArealRouteStates.IsItGroupCase), Text="Да")
+async def is_it_group_case_yes (msg: types.Message, state: FSMContext):
+    await msg.answer("Укажите адрес ответчика")
+    await state.set_state(None)
+
+
+@ArealRouter.message(StateFilter(ArealRouteStates.IsItGroupCase), Text="Нет")
+async def is_it_group_case_no (msg: types.Message, state: FSMContext):
+    await msg.answer("Спор следует из договора?")
+    await state.set_state(ArealRouteStates.IsItContract)
+
+
+@ArealRouter.message(StateFilter(ArealRouteStates.IsItContract), Text="Да")
+async def is_it_contract_yes (msg: types.Message, state: FSMContext):
+    await msg.answer("Это договор перевозки?")
+    await state.set_state(ArealRouteStates.IsIttransportation)
+
+
+@ArealRouter.message(StateFilter(ArealRouteStates.IsIttransportation), Text="Да")
+async def is_it_transportation_yes (msg: types.Message, state: FSMContext):
+    await msg.answer("Укажите адрес перевозчика")
+    await state.set_state(None)
+
+
+
+@ArealRouter.message(StateFilter(ArealRouteStates.IsIttransportation), Text="Нет")
+async def is_it_transportation_no (msg: types.Message, state: FSMContext):
+    await msg.answer("Подсудность определена договором?")
+    await state.set_state(ArealRouteStates.IsItContractualjurisdiction)
+
+
+@ArealRouter.message(StateFilter(ArealRouteStates.IsItContractualjurisdiction), Text="Да")
+async def is_it_contractual_jurisdiction_yes (msg: types.Message, state: FSMContext):
+    await msg.answer("Рекомендуем обратиться в суд, указанный в договоре")
+    await state.set_state(None)
+
+
+@ArealRouter.message(StateFilter(ArealRouteStates.IsItContractualjurisdiction), Text="Нет")
+async def is_it_contractual_jurisdiction_no (msg: types.Message, state: FSMContext):
+    await msg.answer("В договоре определено место исполнения?")
+    await state.set_state(ArealRouteStates.ThePlaceOfExecutionIsIndicated)
+
+
+@ArealRouter.message(StateFilter(ArealRouteStates.ThePlaceOfExecutionIsIndicated), Text="Да")
+async def the_place_of_execution_is_indicated_yes (msg: types.Message, state: FSMContext):
+    await msg.answer("Укажите место исполнения или адрес ответчика")
+    await state.set_state(None)
+
+
+@ArealRouter.message(StateFilter(ArealRouteStates.ThePlaceOfExecutionIsIndicated), Text="Нет")
+async def the_place_of_execution_is_indicated_no (msg: types.Message, state: FSMContext):
+    await msg.answer("Спор связан с защитой трудовых прав?")
+    await state.set_state(ArealRouteStates.IsItJobCase)
+
+
+@ArealRouter.message(StateFilter(ArealRouteStates.IsItContract), Text="Нет")
+async def is_it_contract_no (msg: types.Message, state: FSMContext):
+    await msg.answer("Спор связан со столкновением судов?")
+    await state.set_state(ArealRouteStates.IsItCollisionOfShips)
+
+
+@ArealRouter.message(StateFilter(ArealRouteStates.IsItCollisionOfShips), Text="Да")
+async def is_it_collision_of_ship_yes (msg: types.Message, state: FSMContext):
+    await msg.answer("Укажите")
+    await state.set_state(ArealRouteStates.IsItCollisionOfShips)

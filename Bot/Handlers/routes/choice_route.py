@@ -137,4 +137,4 @@ async def is_it_ralty_case_yes(msg: types.Message, state: FSMContext):
 @ChoiceRouter.message(StateFilter(ChoiceRouteStates.IsItSpace), Text('Нет')) #TODO Сделать обработку адреса
 async def is_it_ralty_case_no(msg: types.Message, state: FSMContext):
     await msg.answer("Укажите адрес ответчика")
-        await state.set_state(None)
+    await state.set_state(None)
