@@ -61,7 +61,7 @@ def makeFindCourtsRequest(id):
 
 addresses = makeSuggestionAddressRequest("Гурзуфская 5")
 print(addresses)
-print(makeFindCourtsRequest(addresses['г Новосибирск, ул Гурзуфская, д 5']))
+print(makeFindCourtsRequest(addresses['г Екатеринбург, ул Гурзуфская, д 5']))
 
 # for address, id in addresses.items():
 #     print(address)

@@ -1,0 +1,29 @@
+version: "3.3"
+
+services:
+  bot:
+    build: ./Bot
+    volumes: 
+      - ./Bot:/bot
+    # ports:
+    image: app:tgbot
+    container_name: tgbot_container
+    command: python3 bot.py
+    depends_on:
+      - mongodb
+    networks:
+      - bot-network
+
+  mongodb:
+    image: mongo
+    ports: 
+      - 27017:27017
+    networks:
+      - bot-network
+
+
+networks:
+  bot-network:
+    driver: bridge
+
+
