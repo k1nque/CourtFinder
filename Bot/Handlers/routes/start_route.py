@@ -16,6 +16,10 @@ class StartRouteStates(StatesGroup):
     IsItRussianCourt = State()
 
 
+@StartRouter.message(Command("clear_state"))
+async def clear_state(msg: types.Message, state: FSMContext):
+    await state.set_state(None)
+
 
 @StartRouter.message(StateFilter(None), Command("start_test"))
 async def start_test(msg: types.Message, state: FSMContext):

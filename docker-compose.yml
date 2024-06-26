@@ -15,7 +15,7 @@ services:
       - bot-network
 
   mongodb:
-    image: mongo
+    image: mongodb/mongodb-community-server
     ports: 
       - 27017:27017
     networks:
