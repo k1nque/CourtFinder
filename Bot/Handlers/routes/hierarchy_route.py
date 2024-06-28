@@ -2,6 +2,7 @@ from aiogram import types, Router, F
 from aiogram.filters import CommandStart, Command, StateFilter
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.context import FSMContext
+from Handlers.routes.choice_route import ChoiceRouteStates
 
 HierarchyRouter = Router()
 
@@ -20,30 +21,42 @@ class HierarchyRouteStates(StatesGroup):
     IsItRightCase = State()
     IsItTopSecret = State()
 
+    # TODO начало мышь
+@HierarchyRouter.message(StateFilter(ChoiceRouteStates.AreYou_ULOrIP), F.text == "Нет")
+async def are_you_ul_or_ip_no(msg: types.Message, state: FSMContext):
+    
+    await against_federal_body(msg, state)
 
-    #TODO начало мышь
+@HierarchyRouter.message(StateFilter(ChoiceRouteStates.IsItEconomicalCase), F.text == "Нет")
+async def is_it_economical_case_no(msg: types.Message, state: FSMContext):
+    await against_federal_body(msg, state)
 
+@HierarchyRouter.message(StateFilter(ChoiceRouteStates.IsYourDefendentCountry), F.text == "Нет")
+async def chioce2marriage(msg: types.Message, state: FSMContext):
+    await is_your_defendent_country_no(msg, state)
 
-@HierarchyRouter.message(StateFilter(HierarchyRouteStates.IsYourDefendentCountry), F.text == "Да")
-async def is_your_defendent_country_yes(msg: types.Message, state: FSMContext):
-    await msg.answer("Оспаривается решение федерального органа")
+# @HierarchyRouter.message(StateFilter(HierarchyRouteStates.IsYourDefendentCountry), F.text == "Да")
+async def is_it_federal(msg: types.Message, state: FSMContext):
+    await msg.answer("Оспаривается решение федерального органа?")
     await state.set_state(HierarchyRouteStates.IsItFederal)
 
 
 @HierarchyRouter.message(StateFilter(HierarchyRouteStates.IsYourDefendentCountry), F.text == "Что это?")
-async def is_your_defendent_country_what_is_it(msg: types.Message, state: FSMContext):
-    await msg.answer #TODO
+async def is_it_federal_what_is_it(msg: types.Message, state: FSMContext):
+    await msg.answer  # TODO
 
 
 @HierarchyRouter.message(StateFilter(HierarchyRouteStates.IsItFederal), F.text == "Да")
-async def is_your_defendent_country_yes(msg: types.Message, state: FSMContext):
+async def is_it_federal_yes(msg: types.Message, state: FSMContext):
     await msg.answer("Верховный Суд")
     await state.set_state(None)
 
 
 @HierarchyRouter.message(StateFilter(HierarchyRouteStates.IsItFederal), F.text == "Нет")
-async def is_your_defendent_country_no(msg: types.Message, state: FSMContext):
-    await msg.answer("Оспариваются решения органов государственной власти субъектов и представительств муниципальных образований?")
+async def is_it_federal_no(msg: types.Message, state: FSMContext):
+    await msg.answer(
+        "Оспариваются решения органов государственной власти субъектов и представительств муниципальных образований?"
+    )
     await state.set_state(HierarchyRouteStates.IsItSabjectOrmunicipal)
 
 
@@ -73,8 +86,10 @@ async def is_it_less_50k_no(msg: types.Message, state: FSMContext):
 
 @HierarchyRouter.message(StateFilter(HierarchyRouteStates.IsItLess50K), F.text == "Да")
 async def is_it_less50k_yes(msg: types.Message, state: FSMContext):
-    await msg.answer("Это наследственный спор?") #TODO посмотреть ответ на вопрос связан ли спор с интеллектуалкой, ответ аналогичен ответу про наследство 
-    await state.set_state(HierarchyRouteStates.IsItinheritanceOrIP) #TODO вывод Мировой/районный суд
+    await msg.answer(
+        "Это наследственный спор?"
+    )  # TODO посмотреть ответ на вопрос связан ли спор с интеллектуалкой, ответ аналогичен ответу про наследство
+    await state.set_state(HierarchyRouteStates.IsItinheritanceOrIP)  # TODO вывод Мировой/районный суд
 
 
 @HierarchyRouter.message(StateFilter(HierarchyRouteStates.ZPP), F.text == "Нет")
@@ -86,37 +101,22 @@ async def ZPP_no(msg: types.Message, state: FSMContext):
 @HierarchyRouter.message(StateFilter(HierarchyRouteStates.ZPP), F.text == "Да")
 async def ZPP_yes(msg: types.Message, state: FSMContext):
     await msg.answer("Спор меньше 100 тысяч рублей?")
-    await state.set_state(HierarchyRouteStates.ZPP_Less100K) #TODO выходит в вывод
+    await state.set_state(HierarchyRouteStates.ZPP_Less100K)  # TODO выходит в вывод
 
 
 @HierarchyRouter.message(StateFilter(HierarchyRouteStates.IsItRightCase), F.text == "Что это?")
-async def is_it_right_case_what_is_it (msg: types.Message, state: FSMContext):
-    await msg.answer #TODO
+async def is_it_right_case_what_is_it(msg: types.Message, state: FSMContext):
+    await msg.answer  # TODO
 
 
 @HierarchyRouter.message(StateFilter(HierarchyRouteStates.IsItRightCase), F.text == "Да?")
-async def is_it_right_case_yes (msg: types.Message, state: FSMContext):
-    await msg.answer #TODO вывод
+async def is_it_right_case_yes(msg: types.Message, state: FSMContext):
+    await msg.answer  # TODO вывод
 
 
 @HierarchyRouter.message(StateFilter(HierarchyRouteStates.IsItRightCase), F.text == "Нет")
-async def is_it_right_case_no (msg: types.Message, state: FSMContext):
+async def is_it_right_case_no(msg: types.Message, state: FSMContext):
     await msg.answer("Спор связан с государственной тайной?")
     await state.set_state(HierarchyRouteStates.IsItTopSecret)
 
-    #TODO вывод 
-
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
+    # TODO вывод

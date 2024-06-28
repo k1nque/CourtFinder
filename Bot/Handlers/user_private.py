@@ -15,7 +15,7 @@ user_private_router.include_routers(
     ChoiceRouter,
     StartRouter,
     TwoQuestionsRouter,
-    )
+)
 
 # _user_private_router = Router()
 
@@ -78,49 +78,48 @@ user_private_router.include_routers(
 #         "Спор связан с результатами интеллектуальной деятельности и приравненным к ним средствам индивидуализации?"
 #     )
 #     await state.set_state(Test.IsItIntellectualCase)
-    
-    
+
+
 # @_user_private_router.message(StateFilter(Test.WasCaseBefore), F.text == "Да")
 # async def is_it_russian_court(msg: types.Message, state: FSMContext):
 #     await msg.answer("Суд Российский?")
 #     await state.set_state(Test.IsRussianCourtCase)
-    
-    
-     
+
+
 # @_user_private_router.message(StateFilter(Test.WasCaseBefore), F.text == "Нет")
 # async def is_it_foreign_entrepreneurial_acrivity_case(msg: types.Message, state: FSMContext):
 #     await msg.answer("Связан ли спор с предпринимательской или другой экономической деятельностью")
 #     await state.set_state(Test.AddressOfDebtorNotEntrepreneurial)
-    
+
 
 # @_user_private_router.message(StateFilter(Test.AddressOfDebtorNotEntrepreneurial), F.text == "Не знаю") # TODO
 # async def address_of_debtor_not_entrepreneurial(msg: types.Message, state: FSMContext):
 #     await msg.answer("Введите место нахождения имущества")
-#     await state.set_state(Test.LocationOfPropertyNotEntrepreneurial) 
-   
-   
+#     await state.set_state(Test.LocationOfPropertyNotEntrepreneurial)
+
+
 # @_user_private_router.message(StateFilter(Test.LocationOfPropertyNotEntrepreneurial), F.text)
 # async def location_of_property_not_entrepreneurial(msg: types.Message, state: FSMContext):
 #     await general_jurisdiction_court_of_subject(msg, state)
-    
-    
+
+
 # @_user_private_router.message(StateFilter(Test.IsItForeignEntrepreneurialActivityCase), F.text == "Да")
 # async def address_of_debor_entrepreneurial(msg: types.Message, state: FSMContext):
 #     await msg.answer("Введите место жительства должника")
 #     await state.set_state(Test.AddressOfDebtorEntrepreneurial)
-    
-    
+
+
 # @_user_private_router.message(StateFilter(Test.AddressOfDebtorEntrepreneurial), F.text == "Не знаю")
 # async def location_of_property_entrepreneurial(msg: types.Message, state: FSMContext):
 #     await msg.answer("Введите место нахождения имущества")
 #     await state.set_state(Test.LocationOfPropertyEntrepreneurial)
-    
-    
+
+
 # @_user_private_router.message(StateFilter(Test.LocationOfPropertyEntrepreneurial), F.text)
 # async def location_of_property_entrepreneurial(msg: types.Message, state: FSMContext):
 #     await arbitral_court_of_subject(msg, state)
 
-    
+
 # @_user_private_router.message(StateFilter(Test.IsItIntellectualCase), F.text == "Нет")
 # async def it_it_intellectual_case_no(msg: types.Message, state: FSMContext):
 #     await is_it_entrepreneurial_activity_case(msg, state)
@@ -136,12 +135,12 @@ user_private_router.include_routers(
 # async def FOIP_acts_challenge_case(msg: types.Message, state: FSMContext):
 #     await msg.answer("Оспариваются акты ФОИП?")
 #     await state.set_state(Test.FOIP_ActsChallengeCase)
-    
+
 
 # @_user_private_router.message(StateFilter())
 # async def FOIP_no(msg: types.Message, state: FSMContext):
 #     await is_it_entrepreneurial_activity_case(msg, state)
-    
+
 
 # @_user_private_router.message(StateFilter(Test.FOIP_ActsChallengeCase), F.text == "Да")
 # async def long_intellectual_case(msg: types.Message, state: FSMContext):
@@ -160,8 +159,8 @@ user_private_router.include_routers(
 # @_user_private_router.message(StateFilter(Test.LongIntellectual), F.text == "Да")  # TODO
 # async def long_intellectual_yes(msg: types.Message, state: FSMContext):
 #     await intellectual_property_court(msg, state)
-    
-    
+
+
 # @_user_private_router.message(StateFilter(Test.LongIntellectual), F.text == "Нет")
 # async def long_intellectual_no(msg: types.Message, state: FSMContext):
 #     await is_it_entrepreneurial_activity_case(msg, state)
@@ -178,52 +177,52 @@ user_private_router.include_routers(
 # @_user_private_router.message(StateFilter(Test.IsItCopyRightCase), F.text == "Нет")
 # async def is_it_copyright_no(msg: types.Message, state: FSMContext):  # TODO
 #     await intellectual_property_court(msg, state)
-    
-    
+
+
 # @_user_private_router.message(StateFilter(Test.IsItEntrepreneurialActivityCase, F.text == "Нет"))
 # async def is_it_entrepreneurial_no(msg: types.Message, state: FSMContext):
-#     await general_jurisdiction_court(msg, state)    
-    
-    
+#     await general_jurisdiction_court(msg, state)
+
+
 # @_user_private_router.message(StateFilter(Test.IsItEntrepreneurialActivityCase), F.text == "Да")
 # async def is_it_bankruptcy_case(msg: types.Message, state: FSMContext):
 #     await msg.answer("Связан ли спор с банкротством?")
 #     await state.set_state(Test.IsItBankruptcyCase)
-    
-    
+
+
 # @_user_private_router.message(StateFilter(Test.IsItBankruptcyCase), F.text == "Нет")
 # async def is_related_with_legal_entity_status(msg: types.Message, state: FSMContext):
 #     await msg.answer("Правонарушение связано с вашим статусом Юридического лица / ИП")
 #     await state.set_state(Test.IsRelatedWithLegalEntityStatus)
-    
-    
+
+
 # @_user_private_router.message(StateFilter(Test.IsRelatedWithLegalEntityStatus), F.text == "Нет")
 # async def is_related_with_legal_entity_status_no(msg: types.Message, state: FSMContext):
-#     await general_jurisdiction_court(msg, state)  
-    
-    
+#     await general_jurisdiction_court(msg, state)
+
+
 # @_user_private_router.message(StateFilter(Test.IsRelatedWithLegalEntityStatus), F.text == "Да")
 # async def challenging_with_legal_entity_case(msg: types.Message, state: FSMContext):
 #     await msg.answer("Вы судитесь с Юридическим лицом / ИП?")
 #     await state.set_state(Test.ChallengingWithLegalEntityCase)
-    
-    
+
+
 # @_user_private_router.message(StateFilter(Test.ChallengingWithLegalEntityCase), F.text == "Нет")
 # async def challenging_government_actions_case(msg: types.Message, state: FSMContext):
 #     await msg.answer("Спор связан с оспариванием действий гос органов?")
 #     await state.set_state(Test.ChallengingGovernmentActionsCase)
-    
-    
+
+
 # @_user_private_router.message(StateFilter(Test.ChallengingGovernmentActionsCase), F.text == "Нет")
 # async def challenging_government_actions_case_no(msg: types.Message, state: FSMContext):
 #     await general_jurisdiction_court(msg, state)
-    
-    
+
+
 # @_user_private_router.message(StateFilter(Test.ChallengingGovernmentActionsCase), F.text == "Да")
 # async def challenging_government_actions_case_yes(msg: types.Message, state: FSMContext):
 #     await arbitral_court(msg, state)
-    
-    
+
+
 # # "__________________________________________________________________________________________________________________________________________________________"
 
 
@@ -234,19 +233,19 @@ user_private_router.include_routers(
 
 # async def intellectual_property_court(msg: types.Message, state: FSMContext):  # TODO
 #     await msg.answer("Суд по Интеллектуальным правам")
-    
-    
+
+
 # async def general_jurisdiction_court(msg: types.Message, state: FSMContext): # TODO
 #     await msg.answer("Суды общей Юрисдикции")
 
 
 # async def arbitral_court(msg: types.Message, state: FSMContext): # TODO
 #     await msg.answer("Арбитражные суды")
-    
-    
+
+
 # async def arbitral_court_of_subject(msg: types.Message, state: FSMContext):
 #     await msg.answer("Арбитражный суд субъекта")
-    
-    
+
+
 # async def general_jurisdiction_court_of_subject(msg: types.Message, state: FSMContext):
 #     await msg.answer("СОЮ Субъекта")
