@@ -34,7 +34,7 @@ class DB:
                 self._users.insert_one(user)
                 return True
         except PyMongoError as ex:
-            print(f"Exception while creatng user:\n{ex}")
+            print(f"Exception while creating user:\n{ex}")
         return False
 
     def find_by_userid(self, userid):

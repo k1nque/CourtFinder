@@ -24,18 +24,25 @@ class HierarchyRouteStates(StatesGroup):
     # TODO начало мышь
 @HierarchyRouter.message(StateFilter(ChoiceRouteStates.AreYou_ULOrIP), F.text == "Нет")
 async def are_you_ul_or_ip_no(msg: types.Message, state: FSMContext):
-    
     await against_federal_body(msg, state)
+
 
 @HierarchyRouter.message(StateFilter(ChoiceRouteStates.IsItEconomicalCase), F.text == "Нет")
 async def is_it_economical_case_no(msg: types.Message, state: FSMContext):
     await against_federal_body(msg, state)
+    
+
+async def against_federal_body(msg: types.Message, state: FSMContext):
+    await msg.answer("Оспаривание решения гос. органа?")
+    await state.set_state(HierarchyRouteStates.IsYourDefendentCountry)
+
 
 @HierarchyRouter.message(StateFilter(ChoiceRouteStates.IsYourDefendentCountry), F.text == "Нет")
 async def chioce2marriage(msg: types.Message, state: FSMContext):
     await is_your_defendent_country_no(msg, state)
 
-# @HierarchyRouter.message(StateFilter(HierarchyRouteStates.IsYourDefendentCountry), F.text == "Да")
+
+@HierarchyRouter.message(StateFilter(HierarchyRouteStates.IsYourDefendentCountry), F.text == "Да")
 async def is_it_federal(msg: types.Message, state: FSMContext):
     await msg.answer("Оспаривается решение федерального органа?")
     await state.set_state(HierarchyRouteStates.IsItFederal)
@@ -43,7 +50,7 @@ async def is_it_federal(msg: types.Message, state: FSMContext):
 
 @HierarchyRouter.message(StateFilter(HierarchyRouteStates.IsYourDefendentCountry), F.text == "Что это?")
 async def is_it_federal_what_is_it(msg: types.Message, state: FSMContext):
-    await msg.answer  # TODO
+    await msg.answer()  # TODO
 
 
 @HierarchyRouter.message(StateFilter(HierarchyRouteStates.IsItFederal), F.text == "Да")
