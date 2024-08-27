@@ -1,8 +1,12 @@
 from aiogram import types, Router, F
-from aiogram.filters import CommandStart, Command, StateFilter
+from aiogram.filters import StateFilter
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.context import FSMContext
-from Handlers.routes.choice_route import ChoiceRouteStates
+
+from .choice_route import ChoiceRouteStates
+from db import DB
+from exts.enums import CourtType
+
 
 HierarchyRouter = Router()
 
@@ -33,12 +37,22 @@ async def is_it_economical_case_no(msg: types.Message, state: FSMContext):
     
 
 async def against_federal_body(msg: types.Message, state: FSMContext):
+    db = DB.getInstance()
+    db.update_user(
+        msg.from_user.id,
+        court_type=CourtType.General
+    )
     await msg.answer("Оспаривание решения гос. органа?")
     await state.set_state(HierarchyRouteStates.IsYourDefendentCountry)
 
 
 @HierarchyRouter.message(StateFilter(ChoiceRouteStates.IsYourDefendentCountry), F.text == "Нет")
 async def chioce2marriage(msg: types.Message, state: FSMContext):
+    db = DB.getInstance()
+    db.update_user(
+        msg.from_user.id,
+        court_type=CourtType.General
+    )
     await is_your_defendent_country_no(msg, state)
 
 

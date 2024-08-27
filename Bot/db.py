@@ -2,7 +2,6 @@ from pymongo import MongoClient
 from pymongo.errors import PyMongoError
 from pymongo.server_api import ServerApi
 from os import getenv
-from dotenv import find_dotenv, load_dotenv
 
 
 class DB:
@@ -23,33 +22,29 @@ class DB:
             cls.__instance = DB()
         return cls.__instance
 
-    def create_user(self, userid, address=None, court_type=None) -> bool:
+    def create_user(self, userid: int) -> bool:
         try:
             if not self._users.find_one({"userid": userid}):
                 user = {"userid": userid}
-                if address is not None:
-                    user["address"] = address
-                if court_type is not None:
-                    user["court_type"] = court_type
                 self._users.insert_one(user)
                 return True
         except PyMongoError as ex:
             print(f"Exception while creating user:\n{ex}")
         return False
 
-    def find_by_userid(self, userid):
+    def find_by_userid(self, userid: int):
         try:
             user = self._users.find_one({"userid": userid})
             return user
         except PyMongoError as ex:
             print(f"Exception while getting user by userid:\n{ex}")
 
-    def update_user(self, userid: str, key: str, value: str) -> bool:
+    def update_user(self, userid: int, **kwargs) -> bool:
         try:
             if self._users.find_one({"userid": userid}) is not None:
                 self._users.update_one(
                     {"userid": userid},
-                    {"$set": {key: value}}
+                    {"$set": kwargs}
                 )
                 return True
         except PyMongoError as ex:

@@ -1,6 +1,5 @@
-from curses.ascii import FS
 from aiogram import types, Router, F
-from aiogram.filters import CommandStart, Command, StateFilter
+from aiogram.filters import StateFilter
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.context import FSMContext
 from Handlers.routes.two_questions_route import TwoQuestionsRouteStates
@@ -78,7 +77,7 @@ async def is_your_defendant_ul_or_ip_no(msg: types.Message, state: FSMContext):
 
 
 @ChoiceRouter.message(StateFilter(ChoiceRouteStates.IsYourDefendentCountry), F.text == "Да")  # TODO Арбитражный суд
-async def is_your_defendant_ul_or_ip_no(msg: types.Message, state: FSMContext):
+async def is_your_defendant_country_yes(msg: types.Message, state: FSMContext):
     await msg.answer("Вы спорите с арбитражным судом? (Просим одуматься)")
     await state.set_state(ChoiceRouteStates.IsYourDefendentArbitrationCourt)
 

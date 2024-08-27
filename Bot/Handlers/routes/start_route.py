@@ -3,6 +3,8 @@ from aiogram.filters import CommandStart, Command, StateFilter
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.context import FSMContext
 from aiogram import Router
+from dotenv import dotenv_values
+from db import DB
 from Keyboards.keyboards_markups import DefaultKB, WA_KB
 
 StartRouter = Router()
@@ -23,6 +25,8 @@ async def clear_state(msg: types.Message, state: FSMContext):
 
 @StartRouter.message(StateFilter(None), Command("start_test"))
 async def start_test(msg: types.Message, state: FSMContext):
+    db = DB.getInstance()
+    db.create_user(msg.from_user.id)
     await msg.answer("Есть ли нарушение в УК?", reply_markup=DefaultKB)
     await state.set_state(StartRouteStates.IsItCriminalCase)
 
