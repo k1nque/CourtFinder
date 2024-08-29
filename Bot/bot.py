@@ -1,4 +1,4 @@
-from Handlers.main_router import MainRouter
+from Handlers import router
 
 import asyncio
 import logging
@@ -17,7 +17,7 @@ logging.basicConfig(level=logging.INFO)
 bot = Bot(token=os.getenv('TOKEN'))
 dp = Dispatcher()
 
-dp.include_router(MainRouter)
+dp.include_router(router)
 
 
 async def main():
