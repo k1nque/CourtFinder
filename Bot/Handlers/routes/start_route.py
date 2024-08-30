@@ -1,8 +1,6 @@
 from aiogram import types, Router, F
 from aiogram.filters import Command, StateFilter
 from aiogram.fsm.context import FSMContext
-from aiogram import Router
-from db import DB
 from Keyboards.keyboards_markups import DefaultKB, WA_KB
 
 from exts.states import StartRouteStates as States
@@ -10,16 +8,20 @@ from exts.states import StartRouteStates as States
 router = Router()
 
 
-
 @router.message(Command("clear_state"))
 async def clear_state(msg: types.Message, state: FSMContext):
     await state.set_state(None)
+    data = await state.get_data()
+    address = data.get("address")
+    await state.clear()
+    if address:
+        await state.set_data({"address": address})
 
 
 @router.message(StateFilter(None), Command("start_test"))
 async def start_test(msg: types.Message, state: FSMContext):
-    db = DB.getInstance()
-    db.create_user(msg.from_user.id)
+    # db = DB.getInstance()
+    # db.create_user(msg.from_user.id)
     await msg.answer("Есть ли нарушение в УК?", reply_markup=DefaultKB)
     await state.set_state(States.IsItCriminalCase)
 

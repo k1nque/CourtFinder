@@ -2,8 +2,6 @@ from aiogram import types, Router, F
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 
-from db import DB
-
 from exts.enums import CourtType
 from exts.states import HierarchyRouteStates as States
 from exts.states import ChoiceRouteStates
@@ -12,33 +10,37 @@ from exts.states import ChoiceRouteStates
 router = Router()
 
 
+
+# async def are_you_ul_or_ip_no(msg: types.Message, state: FSMContext):
+#     await against_federal_body(msg, state)
+
+
+
+# async def is_it_economical_case_no(msg: types.Message, state: FSMContext):
+#     await against_federal_body(msg, state)
+
+
 @router.message(StateFilter(ChoiceRouteStates.AreYou_ULOrIP), F.text == "Нет")
-async def are_you_ul_or_ip_no(msg: types.Message, state: FSMContext):
-    await against_federal_body(msg, state)
-
-
 @router.message(StateFilter(ChoiceRouteStates.IsItEconomicalCase), F.text == "Нет")
-async def is_it_economical_case_no(msg: types.Message, state: FSMContext):
-    await against_federal_body(msg, state)
-
-
 async def against_federal_body(msg: types.Message, state: FSMContext):
-    db = DB.getInstance()
-    db.update_user(
-        msg.from_user.id,
-        court_type=CourtType.General
-    )
+    # db = DB.getInstance()
+    # db.update_user(
+    #     msg.from_user.id,
+    #     court_type=CourtType.General
+    # )
     await msg.answer("Оспаривание решения гос. органа?")
     await state.set_state(States.IsYourDefendentCountry)
+    await state.update_data({"court_l0": CourtType.General})
 
 
 @router.message(StateFilter(ChoiceRouteStates.IsYourDefendentCountry), F.text == "Нет")
 async def chioce2marriage(msg: types.Message, state: FSMContext):
-    db = DB.getInstance()
-    db.update_user(
-        msg.from_user.id,
-        court_type=CourtType.General
-    )
+    # db = DB.getInstance()
+    # db.update_user(
+    #     msg.from_user.id,
+    #     court_type=CourtType.General
+    # )
+    await state.update_data({"court_l0": CourtType.General})
     await is_your_defendent_country_no(msg, state)
 
 

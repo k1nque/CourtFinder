@@ -18,7 +18,7 @@ async def start_route(msg: types.Message, state: FSMContext):
 @router.message(StateFilter(States.IsItCounterclaim), F.text == "Да")
 async def is_it_counterclaim_yes(msg: types.Message, state: FSMContext):
     await msg.answer("Обратитесь в суд, в который подан изначальный иск")
-    await state.set_state(None)
+    await state.set_state(None) # TODO Clear state
 
 
 @router.message(StateFilter(States.IsItCounterclaim), F.text == "Нет")

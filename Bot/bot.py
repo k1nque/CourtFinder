@@ -5,6 +5,7 @@ import logging
 import os
 
 from aiogram import Bot, Dispatcher
+from aiogram.fsm.storage.mongo import MongoStorage
 
 from dotenv import find_dotenv, load_dotenv
 load_dotenv(find_dotenv())
@@ -13,9 +14,12 @@ ALLOWED_UPDATES = ['message', 'callback_query']
 
 logging.basicConfig(level=logging.INFO)
 
-# storage = SQLiteStorage(db_path="database.db")
+MONGO_HOST = os.getenv("MONGO_HOST")
+MONGO_PORT = os.getenv("MONGO_PORT")
+
+storage = MongoStorage.from_url(url=f"mongodb://{MONGO_HOST}:{MONGO_PORT}/bot", db_name="bot", collection_name="users")
 bot = Bot(token=os.getenv('TOKEN'))
-dp = Dispatcher()
+dp = Dispatcher(storage=storage)
 
 dp.include_router(router)
 

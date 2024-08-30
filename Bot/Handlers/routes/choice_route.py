@@ -1,7 +1,6 @@
 from aiogram import types, Router, F
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
-from db import DB
 
 from exts.states import TwoQuestionsRouteStates
 from exts.states import ChoiceRouteStates as States
@@ -12,13 +11,14 @@ router = Router()
 
 @router.message(StateFilter(TwoQuestionsRouteStates.IsItIntellectualCase), F.text == "Нет")
 async def start_route(msg: types.Message, state: FSMContext):
-    db = DB.getInstance()
-    db.update_user(
-        msg.from_user.id,
-        isIntellectual=False
-    )
+    # db = DB.getInstance()
+    # db.update_user(
+    #     msg.from_user.id,
+    #     isIntellectual=False
+    # )
     await msg.answer("Cпор связан с банкротством?")
     await state.set_state(States.IsItCrash)
+    await state.update_data({"isIntellectual": False})
 
 
 @router.message(StateFilter(States.IsItCrash), F.text == "Да")  # TODO Арбитражный суд
