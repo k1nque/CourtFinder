@@ -5,14 +5,30 @@ services:
     build: ./Bot
     volumes: 
       - ./Bot:/bot
-    # ports:
+    env_file:
+      - ./Bot/.env
     image: app:tgbot
     container_name: tgbot_container
     command: python3 bot.py
     depends_on:
       - mongodb
+      - api
     networks:
       - bot-network
+
+  api:
+    build: ./CourtRequester
+    volumes:
+      - ./CourtRequester:/CourtRequester
+    env_file:
+      - ./CourtRequester/.env
+    ports:
+      - 8000:8000
+    image: app:court_api
+    container_name: court_api
+    networks:
+      - bot-network
+    command: uvicorn main:app --host 0.0.0.0 --port 8000
 
   mongodb:
     image: mongodb/mongodb-community-server
@@ -20,6 +36,9 @@ services:
       - 27017:27017
     networks:
       - bot-network
+    # environment:
+    #   - MONGO_INITDB_ROOT_USERNAME=mongo
+    #   - MONGO_INITDB_ROOT_PASSWORD=mongo
 
 
 networks:

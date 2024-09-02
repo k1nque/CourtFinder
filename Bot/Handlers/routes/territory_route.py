@@ -5,9 +5,9 @@ from aiogram.fsm.context import FSMContext
 
 from exts.states import TerritoryRouteStates as States
 from exts.states import HierarchyRouteStates
+from exts.states import FinalStates
 from exts.enums import CourtType, GeneralCourtType
 
-from db import DB
 
 router = Router()
 
@@ -54,8 +54,8 @@ async def by_subject_court(msg: Message, state: FSMContext):
 
 @router.message(StateFilter(HierarchyRouteStates.IsItLess50K), F.text == "Да")
 async def is_it_less50k_yes(msg: Message, state: FSMContext):
-    db = DB.getInstance()
-    user = db.find_by_userid(msg.from_user.id)
+    # db = DB.getInstance()
+    # user = db.find_by_userid(msg.from_user.id)
     data = await state.get_data()
     print(type(data["isIntellectual"]))
     if data["isIntellectual"]:
@@ -78,7 +78,7 @@ async def land_plots_yes(msg: Message, state: FSMContext):
     await msg.answer("Укажите адрес земельного участка")
     # TODO Вывод финального ответа
 
-@router.message(StateFilter(States.LandPlots), F.text == "Да")
+@router.message(StateFilter(States.LandPlots), F.text == "Нет")
 async def land_plots_no(msg: Message, state: FSMContext):
     await msg.answer("Иски кредиторов наследодателя, предъявляемые до принятия наследства наследниками")
     await state.set_state(States.CreditorsClaim)
@@ -135,7 +135,7 @@ async def transportation_no(msg: Message, state: FSMContext):
 @router.message(StateFilter(States.DamageCompensation), F.text == "Да")
 async def damage_compensation(msg: Message, state: FSMContext):
     await msg.answer("Укажите ваше (любое):\nМесто жительства\nМесто причинения вреда\nАдрес ответчика")
-    # TODO Вывод финального ответа
+    await state.set_state(FinalStates.AddressInput)
 
 
 @router.message(StateFilter(States.DamageCompensation), F.text == "Нет")

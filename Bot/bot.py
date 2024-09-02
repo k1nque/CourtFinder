@@ -2,23 +2,24 @@ from Handlers import router
 
 import asyncio
 import logging
-import os
 
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.mongo import MongoStorage
 
-from dotenv import find_dotenv, load_dotenv
-load_dotenv(find_dotenv())
+from settings import settings
+
 
 ALLOWED_UPDATES = ['message', 'callback_query']
 
 logging.basicConfig(level=logging.INFO)
 
-MONGO_HOST = os.getenv("MONGO_HOST")
-MONGO_PORT = os.getenv("MONGO_PORT")
+storage = MongoStorage.from_url(
+    url=settings.get_connection_string(),
+    db_name="bot",
+    collection_name="users"
+)
 
-storage = MongoStorage.from_url(url=f"mongodb://{MONGO_HOST}:{MONGO_PORT}/bot", db_name="bot", collection_name="users")
-bot = Bot(token=os.getenv('TOKEN'))
+bot = Bot(token=settings.TOKEN)
 dp = Dispatcher(storage=storage)
 
 dp.include_router(router)
