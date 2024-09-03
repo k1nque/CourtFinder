@@ -15,8 +15,8 @@ router = Router()
 
 
 async def send_first_msg(msg: Message, state: FSMContext):
-    await msg.answer("земельные участки, недра, объекты связанные с землей")
     await state.set_state(States.LandPlots)
+    return await msg.answer("земельные участки, недра, объекты связанные с землей")
 
 
 @router.message(StateFilter(HierarchyRouteStates.IsItInheritanceOrIP), F.text == "Нет")
@@ -27,7 +27,7 @@ async def by_magistrate_court(msg: Message, state: FSMContext):
         "court_l0": CourtType.General,
         "court_l1": GeneralCourtType.Magistrate
     })
-    await send_first_msg(msg, state)
+    return await send_first_msg(msg, state)
     
 
 @router.message(StateFilter(HierarchyRouteStates.IsItInheritanceOrIP), F.text == "Да")
@@ -39,7 +39,7 @@ async def by_district_court(msg: Message, state: FSMContext):
         "court_l0": CourtType.General,
         "court_l1": GeneralCourtType.District
     })
-    await send_first_msg(msg, state)
+    return await send_first_msg(msg, state)
 
 
 @router.message(StateFilter(HierarchyRouteStates.IsItTopSecret), F.text == "Да")
@@ -49,7 +49,7 @@ async def by_subject_court(msg: Message, state: FSMContext):
         "court_l0": CourtType.General,
         "court_l1": GeneralCourtType.Subject
     })
-    await send_first_msg(msg, state)
+    return await send_first_msg(msg, state)
 
 
 @router.message(StateFilter(HierarchyRouteStates.IsItLess50K), F.text == "Да")
@@ -61,10 +61,10 @@ async def is_it_less50k_yes(msg: Message, state: FSMContext):
     if data["isIntellectual"]:
         await send_first_msg(msg, state)
     else:
-        await msg.answer(
-            "Это наследственный спор?"
-        )  # TODO посмотреть ответ на вопрос связан ли спор с интеллектуалкой, ответ аналогичен ответу про наследство
         await state.set_state(HierarchyRouteStates.IsItInheritanceOrIP)  # TODO вывод Мировой/районный суд
+        return await msg.answer(
+            "Это наследственный спор?"
+        )
 
 
 # The end of transition from Hierarchy Route
@@ -73,75 +73,77 @@ async def is_it_less50k_yes(msg: Message, state: FSMContext):
 ---------------------------------------------------------------------------------------------------------
 """
 
+
 @router.message(StateFilter(States.LandPlots), F.text == "Да")
 async def land_plots_yes(msg: Message, state: FSMContext):
-    await msg.answer("Укажите адрес земельного участка")
-    # TODO Вывод финального ответа
+    await state.set_state(FinalStates.AddressInput)
+    return await msg.answer("Укажите адрес земельного участка")
+
 
 @router.message(StateFilter(States.LandPlots), F.text == "Нет")
 async def land_plots_no(msg: Message, state: FSMContext):
-    await msg.answer("Иски кредиторов наследодателя, предъявляемые до принятия наследства наследниками")
     await state.set_state(States.CreditorsClaim)
+    return await msg.answer("Иски кредиторов наследодателя, предъявляемые до принятия наследства наследниками")
 
 
 @router.message(StateFilter(States.CreditorsClaim), F.text == "Да")
 async def creditors_claim_yes(msg: Message, state: FSMContext):
-    await msg.answer("Укажите место открытия наследования")
-    # TODO Вывод финального ответа
+    await state.set_state(FinalStates.AddressInput)
+    return await msg.answer("Укажите место открытия наследования")
 
 
 @router.message(StateFilter(States.CreditorsClaim), F.text == "Нет")
 async def creditors_claim_no(msg: Message, state: FSMContext):
-    await msg.answer("Иск в защиту группы лиц?")
     await state.set_state(States.DefenseGroup)
+    return await msg.answer("Иск в защиту группы лиц?")
 
 
 @router.message(StateFilter(States.DefenseGroup), F.text == "Да")
 async def defense_group_yes(msg: Message, state: FSMContext):
-    await msg.answer("Укажите адрес ответчика")
-    # TODO Вывод финального ответа
+    await state.set_state(FinalStates.AddressInput)
+    return await msg.answer("Укажите адрес ответчика")
 
 
 @router.message(StateFilter(States.DefenseGroup), F.text == "Нет")
 async def defense_group_no(msg: Message, state: FSMContext):
-    await msg.answer("Спор следует из договора?")
     await state.set_state(States.ContractDispute)
+    return await msg.answer("Спор следует из договора?")
 
 
 @router.message(StateFilter(States.ContractDispute), F.text == "Да")
 async def contract_dispute_yes(msg: Message, state: FSMContext):
-    await msg.answer("Перевозка?")
     await state.set_state(States.Transportation)
+    return await msg.answer("Перевозка?")
 
 
 @router.message(StateFilter(States.ContractDispute), F.text == "Нет")
 async def contract_dispute_no(msg: Message, state: FSMContext):
-    await msg.answer("возмещении вреда, причиненного увечьем, иным повреждением здоровья или в результате смерти кормильца")
     await state.set_state(States.DamageCompensation)
+    return await msg.answer("возмещении вреда, причиненного увечьем, иным повреждением здоровья или в результате смерти кормильца")
 
 
 @router.message(StateFilter(States.Transportation), F.text == "Да")
 async def transportation_yes(msg: Message, state: FSMContext):
-    await msg.answer("Укажите адрес перевозчика")
-    # TODO Вывод финального ответа
+    await state.set_state(FinalStates.AddressInput)
+    return await msg.answer("Укажите адрес перевозчика")
 
 
 @router.message(StateFilter(States.Transportation), F.text == "Нет")
 async def transportation_no(msg: Message, state: FSMContext):
-    await msg.answer("Подсудность определена договором?")
     await state.set_state(States.ContractDeterminedJurisdiction)
+    return await msg.answer("Подсудность определена договором?")
 
 
 @router.message(StateFilter(States.DamageCompensation), F.text == "Да")
 async def damage_compensation(msg: Message, state: FSMContext):
-    await msg.answer("Укажите ваше (любое):\nМесто жительства\nМесто причинения вреда\nАдрес ответчика")
     await state.set_state(FinalStates.AddressInput)
+    return await msg.answer("Укажите ваше (любое):\nМесто жительства\nМесто причинения вреда\nАдрес ответчика")
 
 
 @router.message(StateFilter(States.DamageCompensation), F.text == "Нет")
 async def damage_compensation_no(msg: Message, state: FSMContext):
-    await msg.answer("Спор связан с алиментами или установлением отцовства?")
     await state.set_state(States.Alimony)
+    return await msg.answer("Спор связан с алиментами или установлением отцовства?")
 
 
 @router.message(StateFilter(States.ContractDeterminedJurisdiction), F.text == "Да")
@@ -152,8 +154,8 @@ async def contract_determined_jurisdiction_yes(msg: Message, state: FSMContext):
 
 @router.message(StateFilter(States.ContractDeterminedJurisdiction), F.text == "Нет")
 async def contract_determined_jurisdiction_no(msg: Message, state: FSMContext):
-    await msg.answer("Указано место исполнения?")
     await state.set_state(States.AddressSpecified)
+    return await msg.answer("Указано место исполнения?")
 
 
 @router.message(StateFilter(States.Alimony), F.text == "Да")
@@ -161,58 +163,59 @@ async def contract_determined_jurisdiction_no(msg: Message, state: FSMContext):
 @router.message(StateFilter(States.ConsumerProtection), F.text == "Да")
 @router.message(StateFilter(States.PersonalData), F.text == "Да")
 async def alimony_yes(msg: Message, state: FSMContext):
-    await msg.answer("Укажите ваше место жительства или адрес ответчика")
-    # TODO Вывод финального ответа
+    await state.set_state(FinalStates.AddressInput)
+    return await msg.answer("Укажите ваше место жительства или адрес ответчика")
 
 
 @router.message(StateFilter(States.Alimony), F.text == "Нет")
 async def alimony_no(msg: Message, state: FSMContext):
-    await msg.answer("Дело связано с столкновением судов?")
     await state.set_state(States.ShipsColision)
+    return await msg.answer("Дело связано с столкновением судов?")
 
 
 @router.message(StateFilter(States.AddressSpecified), F.text == "Да")
 async def address_specified_yes(msg: Message, state: FSMContext):
-    await msg.answer("Укажите место исполнения или адрес ответчика")
-    # TODO Вывод финального ответа
+    await state.set_state(FinalStates.AddressInput)
+    return await msg.answer("Укажите место исполнения или адрес ответчика")
+
 
 @router.message(StateFilter(States.ShipsColision), F.text == "Нет")
 @router.message(StateFilter(States.AddressSpecified), F.text == "Нет")
 async def labor_rights_protection(msg: Message, state: FSMContext):
-    await msg.answer("Спор связан с защитой трудовых прав?")
     await state.set_state(States.LaborRightsProtection)
+    return await msg.answer("Спор связан с защитой трудовых прав?")
 
 
 @router.message(StateFilter(States.ShipsColision), F.text == "Да")
 async def ships_collision(msg: Message, state: FSMContext):
-    await msg.answer("Укажите место нахождения судна ответчика или порта приписки судна / адрес ответчика")
-    # TODO Вывод финального ответа
-    
+    await state.set_state(FinalStates.AddressInput)
+    return await msg.answer("Укажите место нахождения судна ответчика или порта приписки судна / адрес ответчика")
+
 
 @router.message(StateFilter(States.LaborRightsProtection), F.text == "Нет")
 async def labor_rights_protection_no(msg: Message, state: FSMContext):
-    await msg.answer("Спор связан с защитой прав потребителей?")
     await state.set_state(States.ConsumerProtection)
-    
-    
+    return await msg.answer("Спор связан с защитой прав потребителей?")
+
+
 @router.message(StateFilter(States.ConsumerProtection), F.text == "Нет")
 async def consumer_protection_no(msg: Message, state: FSMContext):
     await msg.answer("Спор связан с персональными данными?")
     await state.set_state(States.BranchActivities)
-    
-    
+
+
 @router.message(StateFilter(States.BranchActivities), F.text == "Да")
 async def branch_activities_yes(msg: Message, state: FSMContext):
     await msg.answer("Укажите адрес филиала или адрес ответчика")
-    # TODO Вывод финального ответа
-    
+    await state.set_state(FinalStates.AddressInput)
+
 
 @router.message(StateFilter(States.BranchActivities), F.text == "Нет")
 async def branch_activities_no(msg: Message, state: FSMContext):
     await msg.answer("Ответчик имеет место жительства в РФ?")
     await state.set_state(States.RF_Residence)
-    
-    
+
+
 @router.message(StateFilter(States.BranchActivities), F.text == "Что это?")
 async def branch_activities_what_is_it(msg: Message, state: FSMContext):
     # TODO What is it
@@ -222,10 +225,10 @@ async def branch_activities_what_is_it(msg: Message, state: FSMContext):
 @router.message(StateFilter(States.RF_Residence), F.text == "Да")
 async def rf_residence_yes(msg: Message, state: FSMContext):
     await msg.answer("Укажите адрес ответчика")
-    # TODO Вывод финального ответа
-    
-    
+    await state.set_state(FinalStates.AddressInput)
+
+
 @router.message(StateFilter(States.RF_Residence), F.text == "Нет")
 async def rf_residence_no(msg: Message, state: FSMContext):
     await msg.answer("Укажите последнее место жительства в РФ или адрес нахождения имущества")
-    # TODO Вывод финального ответа
+    await state.set_state(FinalStates.AddressInput)

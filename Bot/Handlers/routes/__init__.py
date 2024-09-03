@@ -7,6 +7,9 @@ from .two_questions_route import router as two_questions_router
 from .territory_route import router as territory_router
 from .final_route import router as final_router
 
+from exts.middlewares import StateSaver
+from exts.middlewares.message_saver import MessageSaver
+
 
 router = Router()
 router.include_routers(
@@ -17,3 +20,5 @@ router.include_routers(
     territory_router,
     final_router,
 )
+router.message.middleware(StateSaver())
+router.message.middleware(MessageSaver())
