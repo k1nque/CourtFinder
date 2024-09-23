@@ -3,8 +3,10 @@ from aiogram.types import Message
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 
-from exts.states import TwoQuestionsRouteStates, IntellectualRouteStates
+from exts.states import TwoQuestionsRouteStates, IntellectualRouteStates, FinalStates
 from exts.states import ChoiceRouteStates as States
+
+from exts.enums import CourtType
 
 from Keyboards.keyboards_markups import choice_kb
 
@@ -25,18 +27,21 @@ async def start_route(msg: Message, state: FSMContext):
 @router.message(StateFilter(States.IsItCrash), F.text == "Да")  # TODO Арбитражный суд
 async def is_it_crash_yes(msg: Message, state: FSMContext):
     await state.set_state(States.WhoIsCrash)
+    await state.update_data({
+        "court_l0": CourtType.Arbitration
+    })
     return await msg.answer("Чье банкротсвто рассматривается?", reply_markup=choice_kb)
 
 
 @router.message(StateFilter(States.WhoIsCrash), F.text == "Физического лица")
 async def Who_is_crash_FL(msg: Message, state: FSMContext):
-    # TODO
+    await state.set_state(FinalStates.AddressInput)
     return await msg.answer("укажите адрес места жительства должника")
 
 
 @router.message(StateFilter(States.WhoIsCrash), F.text == "Юридического лица")
 async def Who_is_crash_UL(msg: Message, state: FSMContext):
-    # TODO
+    await state.set_state(FinalStates.AddressInput)
     return await msg.answer("укажите адрес местонахождения ")
 
 

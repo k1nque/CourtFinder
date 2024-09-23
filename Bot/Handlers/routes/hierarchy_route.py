@@ -3,9 +3,9 @@ from aiogram.types import Message
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 
-from exts.enums import CourtType
+from exts.enums import CourtType, GeneralCourtType
 from exts.states import HierarchyRouteStates as States
-from exts.states import ChoiceRouteStates
+from exts.states import ChoiceRouteStates, FinalStates
 
 
 router = Router()
@@ -60,6 +60,38 @@ async def is_your_defendent_country_no(msg: Message, state: FSMContext):
 async def is_it_divorce_yes(msg: Message, state: FSMContext):
     await state.set_state(States.IsItChildrenCase)
     return await msg.answer("Есть ли спор о несовершеннолетних детях?")
+
+
+@router.message(StateFilter(States.IsItChildrenCase), F.text == "Да")
+async def is_it_children_yes(msg: Message, state: FSMContext):
+    await state.update_data({
+        "court_l0": CourtType.General,
+        "court_l1": GeneralCourtType.District
+    })
+    await msg.answer("есть несовершеннолетние/проблемы со здоровьем, затрудняющие проезд к месту жительства истца?")
+    await state.set_state(States.AreTheyLess18)
+
+
+@router.message(StateFilter(States.IsItChildrenCase), F.text == "Нет")
+async def is_it_children_no(msg: Message, state: FSMContext):
+    await state.update_data({
+        "court_l0": CourtType.General,
+        "court_l1": GeneralCourtType.Magistrate
+    })
+    await msg.answer("есть несовершеннолетние/проблемы со здоровьем, затрудняющие проезд к месту жительства истца?")
+    await state.set_state(States.AreTheyLess18)
+    
+
+@router.message(StateFilter(States.AreTheyLess18), F.text == "Да")
+async def are_they_less_18_yes(msg: Message, state: FSMContext):
+    await msg.answer("Укажите Ваше место жительства/адрес ответчика")
+    await state.set_state(FinalStates.AddressInput)
+
+
+@router.message(StateFilter(States.AreTheyLess18), F.text == "Нет")
+async def are_they_less_18_no(msg: Message, state: FSMContext):
+    await msg.answer("Укажите адрес ответчика")
+    await state.set_state(FinalStates.AddressInput)
 
 
 @router.message(StateFilter(States.IsItDivorce), F.text == "Нет")
