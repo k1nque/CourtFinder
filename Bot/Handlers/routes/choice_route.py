@@ -3,14 +3,19 @@ from aiogram.types import Message
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 
-from exts.states import TwoQuestionsRouteStates
+from exts.states import TwoQuestionsRouteStates, IntellectualRouteStates
 from exts.states import ChoiceRouteStates as States
+
+from Keyboards.keyboards_markups import choice_kb
 
 
 router = Router()
 
 
 @router.message(StateFilter(TwoQuestionsRouteStates.IsItIntellectualCase), F.text == "Нет")
+@router.message(StateFilter(IntellectualRouteStates.Copyright), F.text == "Да")
+@router.message(StateFilter(IntellectualRouteStates.FOIP), F.text == "Нет")
+@router.message(StateFilter(IntellectualRouteStates.Rospatent), F.text == "Нет")
 async def start_route(msg: Message, state: FSMContext):
     await state.set_state(States.IsItCrash)
     await state.update_data({"isIntellectual": False})
@@ -20,7 +25,7 @@ async def start_route(msg: Message, state: FSMContext):
 @router.message(StateFilter(States.IsItCrash), F.text == "Да")  # TODO Арбитражный суд
 async def is_it_crash_yes(msg: Message, state: FSMContext):
     await state.set_state(States.WhoIsCrash)
-    return await msg.answer("Чье банкротсвто рассматривается?")
+    return await msg.answer("Чье банкротсвто рассматривается?", reply_markup=choice_kb)
 
 
 @router.message(StateFilter(States.WhoIsCrash), F.text == "Физического лица")

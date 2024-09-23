@@ -3,7 +3,7 @@ from aiogram.types import Message
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 
-from exts.states import StartRouteStates
+from exts.states import StartRouteStates, MilitaryRouteStates
 from exts.states import TwoQuestionsRouteStates as States
 
 
@@ -11,6 +11,7 @@ router = Router()
 
 
 @router.message(StateFilter(StartRouteStates.IsItMilitaryServiceCase), F.text == "Нет")
+@router.message(StateFilter(MilitaryRouteStates.ActionDispute), F.text == "Нет")
 async def start_route(msg: Message, state: FSMContext):
     await state.set_state(States.IsItCounterclaim)
     return await msg.answer("В отношении Вас подан иск?")

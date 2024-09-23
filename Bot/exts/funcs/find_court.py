@@ -1,6 +1,6 @@
 from aiogram.fsm.context import FSMContext
 
-from exts.enums import CourtType, GeneralCourtType, ArbitrationCourtTypes
+from exts.enums import CourtType, GeneralCourtType, ArbitrationCourtTypes, MilitaryCourtType
 from .api_call import get_courts, get_arbitration_subject_court
 
 
@@ -14,7 +14,7 @@ async def find_court(fias: str, state: FSMContext) -> dict[str, str]:
             courts = await get_courts(fias)
             if len(courts) < 3:
                 return None
-            match court_l1:
+            match court_l1: # TODO fix missing courts data
                 case GeneralCourtType.Magistrate:
                     return courts[0]
                 case GeneralCourtType.District:
@@ -60,6 +60,13 @@ async def find_court(fias: str, state: FSMContext) -> dict[str, str]:
                     pass
                 case _:
                     raise AttributeError("Court type L1 exception")
+        case CourtType.Military:
+            courts = await get_courts(fias)
+            match court_l1:
+                case MilitaryCourtType.Garrison:
+                    return courts[5]
+                case MilitaryCourtType.District:
+                    return courts[6]
         case _:
             raise AttributeError("Court type L0 exception")
         

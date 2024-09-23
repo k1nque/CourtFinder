@@ -45,3 +45,4 @@ async def recieve_info(callback: CallbackQuery, state: FSMContext):
                 f"Ссылка на сайт суда: {court["LINK"]}"
             )
     await callback.answer()
+    

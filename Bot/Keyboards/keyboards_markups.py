@@ -13,3 +13,12 @@ WA_KB = ReplyKeyboardMarkup(
     resize_keyboard=True,
     one_time_keyboard=False,
 )
+
+choice_kb = ReplyKeyboardMarkup(
+    keyboard=[[
+        KeyboardButton(text="Физического лица"),
+        KeyboardButton(text="Юридического лица")
+        ]],
+    resize_keyboard=True,
+    one_time_keyboard=False
+)
