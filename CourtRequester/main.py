@@ -7,6 +7,7 @@ from court_requester import (
     suggest,
     find_courts as req_find_courts
 )
+from settings import settings
 
 
 def swagger_monkey_patch(*args, **kwargs):
@@ -29,4 +30,12 @@ async def suggestion(addr: str):
 @app.get("/find_courts")
 async def find_courts(fias: str):
     return await req_find_courts(fias)
-    
+
+
+@app.get("/get_arbitration_subject_court")
+async def get_arbitration_subject_court(region: str):
+    for reg in settings.ARBITRATION_COURTS:
+        print(region, reg["region"])
+        if reg["region"] == region:
+            return reg
+    return None

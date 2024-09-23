@@ -15,7 +15,10 @@ async def suggest(addr: str):
         # return suggests
         return [{
             "address": el["value"],
-            "fias": el["data"]["house_fias_id"]
+            "fias": el["data"]["house_fias_id"],
+            "region_with_type": el["data"]["region_with_type"],
+            "region_type_full": el["data"]["region_type_full"],
+            "region": el["data"]["region"],            
         } for el in suggests]
 
 def make_suggestion_address_request(suggestionAdress: str) -> dict[str, str]:
