@@ -1,4 +1,4 @@
-from .routes import router
+from .user_private import router
 
 
 __all__ = (

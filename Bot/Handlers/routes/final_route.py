@@ -28,7 +28,7 @@ async def suggest(msg: Message, state: FSMContext):
             await msg.answer(text="Выберете подходящий адрес", reply_markup=kb)
             await state.set_state(States.SuggestionChoice)
     else:
-        await msg.answer("Введите корректный адрес")
+        return await msg.answer("Введите корректный адрес")
         
         
 @router.callback_query(StateFilter(States.SuggestionChoice))

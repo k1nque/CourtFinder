@@ -9,6 +9,9 @@ from .retrial_route import router as retrial_router
 from .foreign_route import router as foreign_router
 from .final_route import router as final_router
 
+from exts.middlewares import StateSaver
+from exts.middlewares.message_saver import MessageSaver
+
 
 router = Router()
 router.include_routers(
@@ -21,3 +24,5 @@ router.include_routers(
     foreign_router,
     final_router,
 )
+router.message.middleware(StateSaver())
+router.message.middleware(MessageSaver())
